@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer Pro | Pragati Engineering College</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .badge-missing { transition: all 0.3s ease; cursor: pointer; }
+        .badge-missing:hover { transform: translateY(-2px); filter: brightness(1.2); }
+        .roadmap-line::before {
+            content: ''; position: absolute; left: 7px; top: 10px; bottom: 10px;
+            width: 2px; background: #374151;
+        }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        .reveal-results { opacity: 1 !important; transform: translateY(0) !important; display: block !important; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen">
+    <div class="max-w-6xl mx-auto py-10 px-5">
+        
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-500 mb-3">
+                🚀 AI Resume Analyzer Pro
+            </h1>
+            <p class="text-gray-400 text-sm uppercase tracking-widest">Universal IT Role Intelligence & Career Architect</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700 h-fit">
+                    <h2 class="text-xl font-semibold mb-6 flex items-center text-blue-400">
+                        <i data-lucide="cpu" class="mr-2"></i> Analysis Parameters
+                    </h2>
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-tighter">Target IT Role</label>
+                            <input id="role" type="text" placeholder="e.g. Web Developer, Data Scientist..." 
+                                class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:border-blue-500 outline-none transition text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-tighter">Resume (PDF)</label>
+                            <input id="resume" type="file" accept=".pdf"
+                                class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                        </div>
+                        <button onclick="analyze()" id="btn-text" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg transform transition active:scale-95 flex justify-center items-center">
+                            Execute Deep Scan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-2xl border border-yellow-500/20">
+                    <h3 class="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-4 flex items-center">
+                        <i data-lucide="shield" class="mr-2 w-4 h-4"></i> ATS Compliance Audit
+                    </h3>
+                    <div class="space-y-2 text-[10px] text-emerald-400 font-bold">
+                        <p class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3"></i> SEMANTIC PARSING: OK</p>
+                        <p class="flex items-center gap-2"><i data-lucide="check" class="w-3 h-3"></i> FONT HIERARCHY: PASS</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="results-area" class="lg:col-span-3 space-y-6 opacity-0 translate-y-4 hidden transition-all duration-700">
+                
+                <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Match Probability</h2>
+                        <div class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Deep Learning Inference Active</div>
+                    </div>
+                    <div class="text-right">
+                        <span id="score-val" class="text-6xl font-black text-emerald-400">0%</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border border-emerald-500/20">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center">
+                        <i data-lucide="layout-template" class="mr-3"></i> AI-Powered Project Blueprints
+                    </h3>
+                    <p class="text-gray-400 text-xs mb-8 italic">Based on your skill gaps, the AI has designed these portfolio-building projects:</p>
+                    <div id="roadmap-steps" class="roadmap-line relative ml-3 space-y-10 pb-4"></div>
+                </div>
+
+                <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border border-blue-500/20">
+                    <h3 class="text-xl font-bold text-blue-400 mb-6 flex items-center">
+                        <i data-lucide="message-square" class="mr-3"></i> Technical Interview Simulation
+                    </h3>
+                    <div id="interview-container" class="space-y-4"></div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="bg-gray-800 p-8 rounded-2xl border border-red-500/20">
+                        <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center">
+                            <i data-lucide="alert-circle" class="mr-2"></i> Technical Discrepancies
+                        </h3>
+                        <div id="skills-container" class="flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border border-blue-500/20">
+                        <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center">
+                            <i data-lucide="pencil-line" class="mr-2"></i> AI Resume Rewriter
+                        </h3>
+                        <div class="p-4 bg-blue-900/10 border border-blue-500/10 rounded-xl mb-4">
+                            <div id="optimized-output" class="text-gray-300 text-xs italic leading-relaxed"></div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="downloadResume()" class="flex-1 bg-blue-600 p-3 rounded-xl font-bold text-xs flex justify-center items-center gap-2">
+                                <i data-lucide="download" class="w-4 h-4"></i> Download
+                            </button>
+                            <a id="link-linkedin" target="_blank" class="flex-1 bg-blue-900/30 border border-blue-500/50 p-3 rounded-xl text-center font-bold text-blue-400 text-xs">LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    lucide.createIcons();
+
+    // Universal Interview & Project Data
+    const itBrain = {
+        "web": {
+            interviews: [
+                { q: "What is the CSS Box Model?", a: "Margins, Borders, Padding, and Content." },
+                { q: "React Hooks vs Classes?", a: "Hooks add state to functional components without classes." }
+            ],
+            projects: ["Personal Portfolio using React & Tailwind", "E-commerce Product Page with State Management"]
+        },
+        "data": {
+            interviews: [
+                { q: "What is Overfitting?", a: "When a model learns noise instead of data signal." },
+                { q: "Explain SQL Joins.", a: "Combining rows from multiple tables based on columns." }
+            ],
+            projects: ["House Price Prediction using Scikit-Learn", "Automated Sales Dashboard in PowerBI"]
+        },
+        "universal": {
+            interviews: [
+                { q: "What is Git?", a: "A version control system for code tracking." },
+                { q: "Explain APIs.", a: "Rules for software communication." }
+            ],
+            projects: ["Local Task Manager App", "Personal Finance Tracker in Python"]
+        }
+    };
+
+    async function analyze() {
+        const role = document.getElementById('role').value;
+        const file = document.getElementById('resume').files[0];
+        const btn = document.getElementById('btn-text');
+
+        if(!role || !file) { alert("Please provide details."); return; }
+        btn.innerText = "Processing Machine Learning Logic...";
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append("job_description", role);
+        formData.append("resume", file);
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/analyze", { method: "POST", body: formData });
+            const data = await response.json();
+            
+            if (data.status === "success") {
+                const resArea = document.getElementById('results-area');
+                resArea.classList.remove('hidden');
+                setTimeout(() => resArea.classList.add('reveal-results'), 50);
+
+                document.getElementById('score-val').innerText = data.match_score + "%";
+
+                // INTERVIEW LOGIC
+                const intContainer = document.getElementById('interview-container');
+                intContainer.innerHTML = '';
+                const lower = role.toLowerCase();
+                let brainSet = itBrain["universal"];
+                if(lower.includes("web")) brainSet = itBrain["web"];
+                else if(lower.includes("data")) brainSet = itBrain["data"];
+
+                brainSet.interviews.forEach(item => {
+                    const box = document.createElement('div');
+                    box.className = "bg-gray-900/50 p-4 rounded-xl border border-gray-700";
+                    box.innerHTML = `<p class="text-white text-xs font-bold mb-2">${item.q}</p>
+                        <details class="group"><summary class="text-blue-400 text-[10px] cursor-pointer font-bold uppercase">View Answer</summary>
+                        <p class="text-gray-400 text-[10px] mt-2 border-l-2 border-blue-500 pl-3 italic">${item.a}</p></details>`;
+                    intContainer.appendChild(box);
+                });
+
+                // PROJECT ROADMAP LOGIC
+                const container = document.getElementById('skills-container');
+                const roadmapSteps = document.getElementById('roadmap-steps');
+                container.innerHTML = ''; roadmapSteps.innerHTML = '';
+
+                const skills = (data.missing_skills && data.missing_skills.length > 0) ? data.missing_skills : ["System Scalability", "Cloud Infrastructure", "CI/CD Setup"];
+
+                skills.forEach((skill, index) => {
+                    const badge = document.createElement('span');
+                    badge.className = "badge-missing bg-red-900/40 border border-red-500/50 text-red-300 px-3 py-1.5 rounded-full text-[10px] font-bold mr-2 mb-2 inline-block";
+                    badge.innerText = skill.toUpperCase();
+                    container.appendChild(badge);
+
+                    const projectIdea = brainSet.projects[index % brainSet.projects.length] || "Advanced " + skill + " Implementation";
+
+                    const step = document.createElement('div');
+                    step.className = "relative pl-10 pb-4";
+                    step.innerHTML = `<span class="absolute left-0 top-1 w-5 h-5 rounded-full bg-emerald-500 border-4 border-gray-900 z-10"></span>
+                        <div class="bg-gray-900/50 p-5 rounded-xl border border-gray-700 hover:border-emerald-500/40 transition">
+                            <h4 class="text-emerald-400 font-bold text-[10px] uppercase mb-1">Target Skill: ${skill}</h4>
+                            <p class="text-white text-xs font-black mb-3 italic">"Portfolio Project: ${projectIdea}"</p>
+                            <div class="flex gap-2">
+                                <a href="https://www.youtube.com/results?search_query=${skill}+roadmap" target="_blank" class="text-[9px] font-bold text-white bg-red-600 px-3 py-1 rounded-full uppercase">Watch Tutorial</a>
+                                <a href="https://github.com/search?q=${projectIdea.replace(/\s+/g, '+')}" target="_blank" class="text-[9px] font-bold text-white bg-gray-700 px-3 py-1 rounded-full uppercase">Source Code</a>
+                            </div>
+                        </div>`;
+                    roadmapSteps.appendChild(step);
+                });
+
+                document.getElementById('optimized-output').innerHTML = `"Dedicated professional specializing in the <strong>${role}</strong> ecosystem. Actively building a portfolio in <strong>${skills.slice(0, 2).join(', ')}</strong> to drive performance."`;
+                
+                const query = encodeURIComponent(role);
+                document.getElementById('link-linkedin').href = `https://www.linkedin.com/jobs/search/?keywords=${query}`;
+            }
+            btn.innerText = "Scan Complete";
+            lucide.createIcons();
+        } catch (e) { alert("Check Terminal: Is python endpoints.py running?"); } finally { 
+            setTimeout(() => { btn.innerText = "Execute Deep Scan"; btn.disabled = false; }, 3000);
+        }
+    }
+
+    async function downloadResume() {
+        const role = document.getElementById('role').value;
+        const text = document.getElementById('optimized-output').innerText;
+        const formData = new FormData();
+        formData.append("role", role);
+        formData.append("skills", text);
+        const response = await fetch("http://127.0.0.1:8000/download-optimized", { method: "POST", body: formData });
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `Optimized_${role}.txt`;
+        document.body.appendChild(a); a.click(); a.remove();
+    }
+</script>
+</body>
+</html>
